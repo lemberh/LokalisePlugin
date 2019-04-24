@@ -1,7 +1,7 @@
-package api
+package org.rnazarevych.lokalise.api
 
-import api.converters.TranslationsResponseConverter
-import api.dto.TranslationsResponse
+import org.rnazarevych.lokalise.api.converters.TranslationsResponseConverter
+import org.rnazarevych.lokalise.api.dto.TranslationsResponse
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,7 +44,10 @@ interface LokaliseApi {
 object Api {
 
     private val gson = GsonBuilder()
-            .registerTypeAdapter(TranslationsResponse::class.java, TranslationsResponseConverter())
+            .registerTypeAdapter(
+                TranslationsResponse::class.java,
+                TranslationsResponseConverter()
+            )
             .create()
 
     private val loggingInterceptor: Interceptor = HttpLoggingInterceptor()
@@ -58,8 +61,8 @@ object Api {
 
     val api: LokaliseApi = Retrofit.Builder()
             .baseUrl("https://api.lokalise.co/api/")
-            .client(Api.client)
-            .addConverterFactory(GsonConverterFactory.create(Api.gson))
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(LokaliseApi::class.java)
 

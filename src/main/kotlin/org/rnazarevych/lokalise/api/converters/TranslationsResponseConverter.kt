@@ -1,7 +1,7 @@
-package api.converters
+package org.rnazarevych.lokalise.api.converters
 
-import api.dto.TranslationEntry
-import api.dto.TranslationsResponse
+import org.rnazarevych.lokalise.api.dto.TranslationEntry
+import org.rnazarevych.lokalise.api.dto.TranslationsResponse
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

@@ -1,7 +1,7 @@
-import api.dto.TranslationEntry
-import api.dto.TranslationsResponse
+package org.rnazarevych.lokalise.tasks
+
+import org.rnazarevych.lokalise.api.dto.TranslationsResponse
 import org.w3c.dom.Element
-import org.w3c.dom.NodeList
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -11,7 +11,7 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class UpdateStrings {
+internal class TranslationWriter {
 
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
@@ -82,5 +82,3 @@ class UpdateStrings {
 
     private fun escapeXml(source: String) = source.replace("\'", "\\'")
 }
-
-private fun NodeList.last() = item(length - 1)

@@ -1,10 +1,10 @@
-package api.dto
+package org.rnazarevych.lokalise.api.dto
 
 import com.google.gson.annotations.SerializedName
 
 data class TranslationsResponse(
-        val translations: MutableMap<String, List<TranslationEntry>> = mutableMapOf(),
-        @SerializedName("response") val response: Response = Response()
+    val translations: MutableMap<String, List<TranslationEntry>> = mutableMapOf(),
+    @SerializedName("response") val response: Response = Response()
 )
 
 data class TranslationEntry(
