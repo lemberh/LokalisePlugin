@@ -27,8 +27,8 @@ internal class TranslationWriter {
         val strings = xmlDoc.getElementsByTagName("string")
         // cut off plurals as they are not yet supported
         val translation = (translations.translations[lang] ?: listOf())
-                .filter { it.pluralKey == "0" && it.translation.isNotBlank() }
-                .toMutableList()
+            .filter { it.pluralKey == "0" && it.translation.isNotBlank() }
+            .toMutableList()
 
         println("Updating existing entries")
         for (i in 0 until strings.length) {
@@ -58,7 +58,7 @@ internal class TranslationWriter {
 
         println("Writing ${translation.size} new entries")
         if (translation.isNotEmpty()) {
-            xmlDoc.documentElement.appendChild(xmlDoc.createComment("New translations added at ${LocalDateTime.now()}"))
+            xmlDoc.documentElement.appendChild(xmlDoc.createComment("New translations added at ${LocalDateTime.now()} \n"))
             translation.forEach { entry ->
                 val newNode = xmlDoc.documentElement.appendChild(xmlDoc.createElement("string")) as Element
                 newNode.setAttribute("name", entry.key)
