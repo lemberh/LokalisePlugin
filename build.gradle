@@ -17,21 +17,11 @@ plugins {
     id "java-gradle-plugin"
 }
 
+// For publishToMavenLocal
 group = 'org.rnazarevych'
-//version = '1.0.0'
 version = '1.0-SNAPSHOT'
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.rnazarevych'
-            artifactId = 'lokalise-plugin'
-            version = '1.0.0'
-
-            from components.java
-        }
-        
-    }
     repositories {
         mavenLocal()
     }
@@ -75,12 +65,3 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
-
-//task hello(type: UploadStrings)
-
-//task uploadStrings(type: org.rnazarevych.lokalise.tasks.UploadStrings) {
-//    files = [
-//            UploadEntry("$rootDir/app/src/main/res/values/strings.xml", "en"),
-//            UploadEntry("$rootDir/app/src/main/res/values/strings.xml", "en")
-//    ]
-//}
