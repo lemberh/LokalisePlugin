@@ -22,17 +22,19 @@ open class DownloadProjectData : DefaultTask() {
 
     @TaskAction
     fun download() {
-        println("Downloading ${config.langs} ...")
+        println("Downloading ${config.lokaliseLangs} ...")
 
-        val languages = config.langs.joinToString("','", "['", "']")
+        val languages = config.lokaliseLangs.joinToString("','", "['", "']")
         val response = Api.api.fetchTranslations(apiConfig.token, apiConfig.projectId, languages).execute()
 
         println("Downloaded ")
 
-        config.langs.map { lang ->
-            val suffix = if (lang == config.defaultLang) "" else "-$lang"
+        config.lokaliseLangs.forEachIndexed { index, lang ->
+            val androidLang = config.androidLangs[index]
+            val suffix = if (androidLang == config.defaultLang) "" else "-$androidLang"
 
-            translationWriter.update(response.body()!!, lang, File("${config.resPath}/values$suffix/strings.xml"))
+            val localTranslationFile = File("${config.resPath}/values$suffix/strings.xml")
+            translationWriter.update(response.body()!!, lang, localTranslationFile)
         }
     }
 

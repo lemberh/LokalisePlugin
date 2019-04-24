@@ -59,7 +59,8 @@ data class ApiConfig(
 
 data class TranslationsUpdateConfig(
     var resPath: String = "",
-    var langs: List<String> = listOf("en"),
+    var lokaliseLangs: List<String> = listOf("en"),
+    var androidLangs: List<String> = listOf("en"),
     var defaultLang: String = "en"
 )
 
