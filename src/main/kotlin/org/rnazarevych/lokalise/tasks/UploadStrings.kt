@@ -1,15 +1,19 @@
 package org.rnazarevych.lokalise.tasks
 
-import org.rnazarevych.lokalise.api.Api
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.apache.commons.codec.binary.Base64
+import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.rnazarevych.lokalise.ApiConfig
 import org.rnazarevych.lokalise.UploadEntry
+import org.rnazarevych.lokalise.api.Api
+import org.rnazarevych.lokalise.api.dto.UploadFileDto
 import org.rnazarevych.lokalise.taskGroup
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 open class UploadStrings : DefaultTask() {
 
@@ -30,17 +34,24 @@ open class UploadStrings : DefaultTask() {
             println(entry)
 
             val file = File(entry.path)
-            val requestFile = RequestBody.create(MediaType.parse("application/xml"), file)
-            val filePart = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
-            val apiToken = RequestBody.create(MediaType.parse("text/plain"), apiConfig.token)
-            val id = RequestBody.create(MediaType.parse("text/plain"), apiConfig.projectId)
-            val language = RequestBody.create(MediaType.parse("text/plain"), entry.lang)
+            val encoded =
+                Base64.encodeBase64(FileUtils.readFileToByteArray(file))
+            val data = String(encoded, StandardCharsets.US_ASCII)
 
+            val dto = UploadFileDto(
+                data,
+                file.name,
+                entry.lang
+            )
 
-            val response = Api.api.importFile(apiToken, id, filePart, language).execute()
+            val response = Api.api.uploadFile(apiConfig.projectId,dto).execute()
 
-            println(response.body()?.string())
+            if (!response.isSuccessful) {
+                throw RuntimeException("${response.message()} - ${response.code()}")
+            }else{
+                println(response.body()?.string())
+            }
         }
     }
 }

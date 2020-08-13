@@ -1,10 +1,14 @@
 package org.rnazarevych.lokalise.api
 
-import org.rnazarevych.lokalise.api.converters.TranslationsResponseConverter
-import org.rnazarevych.lokalise.api.dto.TranslationsResponse
 import com.google.gson.GsonBuilder
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import org.rnazarevych.lokalise.LokalisePlugin
+import org.rnazarevych.lokalise.api.dto.TranslationsResponse
+import org.rnazarevych.lokalise.api.dto.UploadFileDto
+import org.rnazarevych.lokalise.api.interceptors.AuthInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,30 +17,29 @@ import java.util.concurrent.TimeUnit
 
 interface LokaliseApi {
 
-    @Multipart
-    @POST("project/import")
-    fun importFile(@Part("api_token") apiToken: RequestBody,
-                   @Part("id") id: RequestBody,
-                   @Part file: MultipartBody.Part,
-                   @Part("lang_iso") language: RequestBody
+    @POST("projects/{projectId}/files/upload")
+    fun uploadFile(
+        @Path("projectId") projectId: String,
+        @Body uploadFileDto: UploadFileDto
     ): Call<ResponseBody>
 
+    @Deprecated("this is old API which is not supported, to use it must be updated to new api v2")
     @FormUrlEncoded
     @POST("project/export")
     fun exportProjectData(
-            @Field("api_token") apiToken: String,
-            @Field("id") id: String,
-            @Field("type") type: String = "xml",
-            @Field("langs") langs: List<String>? = null
+        @Field("api_token") apiToken: String,
+        @Field("id") id: String,
+        @Field("type") type: String = "xml",
+        @Field("langs") langs: List<String>? = null
     ): Call<ResponseBody>
 
-    @FormUrlEncoded
-    @POST("string/list")
+    @GET("projects/{projectId}/keys")
     fun fetchTranslations(
-            @Field("api_token") apiToken: String,
-            @Field("id") id: String,
-            @Field("langs") type: String,
-            @Field("platform_mask") platforms: Int = 2
+        @Path("projectId") projectId: String,
+        @Query("include_translations") includeTranslations: Int = 1,
+        @Query("filter_untranslated") filterUntranslated: Int = 1,
+        @Query("filter_platforms") platform: String = "android",
+        @Query("limit") limit: Int = 5000
     ): Call<TranslationsResponse>
 
 }
@@ -44,26 +47,29 @@ interface LokaliseApi {
 object Api {
 
     private val gson = GsonBuilder()
-            .registerTypeAdapter(
-                TranslationsResponse::class.java,
-                TranslationsResponseConverter()
-            )
-            .create()
+        .create()
 
-    private val loggingInterceptor: Interceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+    private val loggingInterceptor: Interceptor = HttpLoggingInterceptor(
+        HttpLoggingInterceptor.Logger { println(it) }
+    ).setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    private val client = OkHttpClient.Builder()
+    private val client by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(LokalisePlugin.config.api.token))
+//            .addInterceptor(loggingInterceptor)
             .connectTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS)
             .readTimeout(100, TimeUnit.SECONDS)
             .build()
+    }
 
-    val api: LokaliseApi = Retrofit.Builder()
-            .baseUrl("https://api.lokalise.co/api/")
+    val api: LokaliseApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.lokalise.com/api2/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(LokaliseApi::class.java)
+    }
 
 }

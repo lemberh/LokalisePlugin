@@ -3,33 +3,61 @@ package org.rnazarevych.lokalise.api.dto
 import com.google.gson.annotations.SerializedName
 
 data class TranslationsResponse(
-    val translations: MutableMap<String, List<TranslationEntry>> = mutableMapOf(),
-    @SerializedName("response") val response: Response = Response()
+    @SerializedName("project_id") val projectId: String,
+    val keys: List<TranslationKey> = emptyList()
 )
 
-data class TranslationEntry(
-        @SerializedName("key") val key: String = "",
-        @SerializedName("key_id") val keyId: String = "",
-        @SerializedName("trans_id") val transId: String = "",
-        @SerializedName("translation") val translation: String = "",
-        @SerializedName("description") val description: String = "",
-        @SerializedName("lang_id") val langId: String = "",
-        @SerializedName("plural_key") val pluralKey: String = "",
-        @SerializedName("plural_name") val pluralName: String = "",
-        @SerializedName("platform_mask") val platformMask: String = "",
-        @SerializedName("is_hidden") val isHidden: String = "",
-        @SerializedName("created_at") val createdAt: String = "",
-        @SerializedName("tags") val tags: List<String> = listOf(),
-        @SerializedName("modified_at") val modifiedAt: String = "",
-        @SerializedName("fuzzy") val fuzzy: String = "",
-        @SerializedName("is_proofread") val isProofread: String = "",
-        @SerializedName("context") val context: String = "",
-        @SerializedName("is_archived") val isArchived: String = "",
-        @SerializedName("key_type") val keyType: String = ""
+data class TranslationKey(
+    @SerializedName("created_at")
+    val createdAt: String,
+    @SerializedName("created_at_timestamp")
+    val createdAtTimestamp: Int,
+    @SerializedName("description")
+    val description: String,
+    @SerializedName("key_id")
+    val keyId: Int,
+    @SerializedName("key_name")
+    val keyName: KeyName,
+    @SerializedName("platforms")
+    val platforms: List<String>,
+    @SerializedName("tags")
+    val tags: List<String>,
+    @SerializedName("translations")
+    val translations: List<Translation>
 )
 
-data class Response(
-        @SerializedName("status") val status: String = "",
-        @SerializedName("code") val code: String = "",
-        @SerializedName("message") val message: String = ""
+data class KeyName(
+    @SerializedName("android")
+    val android: String,
+    @SerializedName("ios")
+    val ios: String,
+    @SerializedName("other")
+    val other: String,
+    @SerializedName("web")
+    val web: String
+)
+
+data class Translation(
+    @SerializedName("is_reviewed")
+    val isReviewed: Boolean,
+    @SerializedName("key_id")
+    val keyId: Int,
+    @SerializedName("language_iso")
+    val languageIso: String,
+    @SerializedName("modified_at")
+    val modifiedAt: String,
+    @SerializedName("modified_at_timestamp")
+    val modifiedAtTimestamp: Int,
+    @SerializedName("modified_by")
+    val modifiedBy: Int,
+    @SerializedName("modified_by_email")
+    val modifiedByEmail: String,
+    @SerializedName("reviewed_by")
+    val reviewedBy: Int,
+    @SerializedName("translation")
+    val translation: String,
+    @SerializedName("translation_id")
+    val translationId: Int,
+    @SerializedName("words")
+    val words: Int
 )

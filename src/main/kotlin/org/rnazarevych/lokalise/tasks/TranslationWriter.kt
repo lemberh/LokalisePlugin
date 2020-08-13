@@ -15,7 +15,7 @@ internal class TranslationWriter {
 
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-    fun update(translations: TranslationsResponse, lang: String, file: File) {
+    fun update(translationKeys: TranslationsResponse, lang: String, file: File) {
         println("Opening File ${file.absolutePath}")
 
         val xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
@@ -23,48 +23,59 @@ internal class TranslationWriter {
         xmlDoc.documentElement.normalize()
 
         println("Root Node:" + xmlDoc.documentElement.nodeName)
+        println("PARSED TRANSLATIONS\n $translationKeys")
 
         val strings = xmlDoc.getElementsByTagName("string")
-        // cut off plurals as they are not yet supported
-        val translation = (translations.translations[lang] ?: listOf())
-                .filter { it.pluralKey == "0" && it.translation.isNotBlank() }
-                .toMutableList()
+        // filter only keys that contain translation for the given language
+        val languageKeys = translationKeys.keys
+            .filter { key ->
+                key.translations.any { t ->
+                    t.languageIso == lang && t.translation.isNotBlank()
+                }
+            }
+            .toMutableList()
 
         println("Updating existing entries")
+        var updatedCount = 0
         for (i in 0 until strings.length) {
             val string = strings.item(i) as Element
-            val id = string.attributes.getNamedItem("name").nodeValue
+            val stringId = string.attributes.getNamedItem("name").nodeValue
 
 
-            val entry = translation.find { it.key == id }
-            if (entry != null) {
+            val translationKey = languageKeys.find { it.keyName.android == stringId }
+            val translation = translationKey?.translations?.find { it.languageIso == lang }
+            if (translation != null) {
                 val localLmd = try {
                     LocalDateTime.parse(string.getAttribute("lmt"), formatter)
                 } catch (ignored: Exception) {
                     LocalDateTime.of(1970, 1, 1, 1, 1, 1)
                 }
-                val remoteLmd = LocalDateTime.parse(entry.modifiedAt, formatter)
+                val remoteLmd = LocalDateTime.parse(trimTimeZone(translation.modifiedAt), formatter)
 
                 // if there is newer text on the backend
                 if (remoteLmd.isAfter(localLmd)) {
-                    string.textContent = escapeXml(entry.translation)
-                    string.setAttribute("lmd", entry.modifiedAt)
+                    string.textContent = escapeXml(translation.translation)
+                    string.setAttribute("lmd", remoteLmd.format(formatter))
+                    updatedCount++
 //                    println("$id -> ${entry.translation}")
                 }
 
-                translation.remove(entry)
+                languageKeys.remove(translationKey)
             }
         }
 
-        println("Writing ${translation.size} new entries")
-        if (translation.isNotEmpty()) {
+        println("Updated $updatedCount entries")
+        println("Writing ${languageKeys.size} new entries")
+        if (languageKeys.isNotEmpty()) {
             xmlDoc.documentElement.appendChild(xmlDoc.createComment("New translations added at ${LocalDateTime.now()}"))
             xmlDoc.documentElement.appendChild(xmlDoc.createComment("\n"))
-            translation.forEach { entry ->
-                val newNode = xmlDoc.documentElement.appendChild(xmlDoc.createElement("string")) as Element
-                newNode.setAttribute("name", entry.key)
-                newNode.setAttribute("lmd", entry.modifiedAt)
-                newNode.textContent = escapeXml(entry.translation)
+            languageKeys.forEach { key ->
+                key.translations.find { it.languageIso == lang }?.let { translation ->
+                    val newNode = xmlDoc.documentElement.appendChild(xmlDoc.createElement("string")) as Element
+                    newNode.setAttribute("name", key.keyName.android)
+                    newNode.setAttribute("lmd", trimTimeZone(translation.modifiedAt))
+                    newNode.textContent = escapeXml(translation.translation)
+                }
             }
         }
 
@@ -82,4 +93,6 @@ internal class TranslationWriter {
     }
 
     private fun escapeXml(source: String) = source.replace("\'", "\\'")
+
+    private fun trimTimeZone(date: String) = date.substring(0, 19)
 }

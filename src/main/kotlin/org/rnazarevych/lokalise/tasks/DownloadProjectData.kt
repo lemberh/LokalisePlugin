@@ -7,6 +7,7 @@ import org.rnazarevych.lokalise.TranslationsUpdateConfig
 import org.rnazarevych.lokalise.api.Api
 import org.rnazarevych.lokalise.taskGroup
 import java.io.File
+import java.lang.RuntimeException
 
 open class DownloadProjectData : DefaultTask() {
 
@@ -24,8 +25,11 @@ open class DownloadProjectData : DefaultTask() {
     fun download() {
         println("Downloading ${config.lokaliseLangs} ...")
 
-        val languages = config.lokaliseLangs.joinToString("','", "['", "']")
-        val response = Api.api.fetchTranslations(apiConfig.token, apiConfig.projectId, languages).execute()
+        val response = Api.api.fetchTranslations(apiConfig.projectId).execute()
+
+        if (!response.isSuccessful){
+            throw RuntimeException("${response.message()} - ${response.code()}")
+        }
 
         println("Downloaded ")
 

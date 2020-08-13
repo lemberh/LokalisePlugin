@@ -11,7 +11,9 @@ const val taskGroup = "lokalise"
 
 class LokalisePlugin : Plugin<Project> {
 
-    lateinit var config: Config
+    companion object {
+        lateinit var config: Config
+    }
 
     override fun apply(project: Project) {
 
