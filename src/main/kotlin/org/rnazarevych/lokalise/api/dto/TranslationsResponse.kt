@@ -22,6 +22,8 @@ data class TranslationKey(
     val platforms: List<String>,
     @SerializedName("tags")
     val tags: List<String>,
+    @SerializedName("is_plural")
+    val isPlural: Boolean,
     @SerializedName("translations")
     val translations: List<Translation>
 )

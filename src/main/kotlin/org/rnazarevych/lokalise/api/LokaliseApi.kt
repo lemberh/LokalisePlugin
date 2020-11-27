@@ -71,5 +71,4 @@ object Api {
             .build()
             .create(LokaliseApi::class.java)
     }
-
 }
