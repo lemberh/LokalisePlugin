@@ -1,6 +1,7 @@
 package org.rnazarevych.lokalise.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.rnazarevych.lokalise.ApiConfig
 import org.rnazarevych.lokalise.TranslationsUpdateConfig
@@ -11,8 +12,9 @@ import java.lang.RuntimeException
 
 open class DownloadProjectData : DefaultTask() {
 
+    @Input
     var apiConfig: ApiConfig = ApiConfig("", "")
-
+    @Input
     var config: TranslationsUpdateConfig = TranslationsUpdateConfig()
 
     init {

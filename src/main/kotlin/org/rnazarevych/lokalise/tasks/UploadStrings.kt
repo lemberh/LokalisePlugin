@@ -6,6 +6,7 @@ import okhttp3.RequestBody
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.rnazarevych.lokalise.ApiConfig
 import org.rnazarevych.lokalise.UploadEntry
@@ -17,8 +18,9 @@ import java.nio.charset.StandardCharsets
 
 open class UploadStrings : DefaultTask() {
 
+    @Input
     var apiConfig: ApiConfig = ApiConfig("", "")
-
+    @Input
     var uploadEntries: List<UploadEntry> = emptyList()
 
     init {
