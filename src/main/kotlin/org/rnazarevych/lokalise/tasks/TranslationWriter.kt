@@ -1,6 +1,7 @@
 package org.rnazarevych.lokalise.tasks
 
 import org.rnazarevych.lokalise.api.dto.TranslationsResponse
+import org.rnazarevych.lokalise.removeEmptyNodes
 import org.w3c.dom.Element
 import java.io.File
 import java.time.LocalDateTime
@@ -70,7 +71,6 @@ internal class TranslationWriter {
         println("Writing ${languageKeys.size} new entries")
         if (languageKeys.isNotEmpty()) {
             xmlDoc.documentElement.appendChild(xmlDoc.createComment("New translations added at ${LocalDateTime.now()}"))
-            xmlDoc.documentElement.appendChild(xmlDoc.createComment("\n"))
             languageKeys.forEach { key ->
                 key.translations.find { it.languageIso == lang }?.let { translation ->
                     val newNode = xmlDoc.documentElement.appendChild(xmlDoc.createElement("string")) as Element
@@ -80,6 +80,8 @@ internal class TranslationWriter {
                 }
             }
         }
+
+        xmlDoc.removeEmptyNodes()
 
         println("Writing to file")
 
