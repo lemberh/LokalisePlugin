@@ -44,7 +44,8 @@ open class UploadStrings : DefaultTask() {
             val dto = UploadFileDto(
                 data,
                 file.name,
-                entry.lang
+                entry.lang,
+                entry.convertPlaceholders
             )
 
             val response = Api.api.uploadFile(apiConfig.projectId,dto).execute()

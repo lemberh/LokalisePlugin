@@ -43,10 +43,11 @@ lokalise {
         defaultLang = "en"  // default language which will be put into values/strings.xml
     }  
   
-    //Here you can specify which files you want to upload
+    //Here you can specify which files you want to upload. convertPlaceholders is true by default
     uploadEntry {  
         path = "$rootDir/app/src/main/res/values/strings.xml"  
-        lang = "en"  
+        lang = "en"
+        convertPlaceholders = false
     }  
     uploadEntry {  
         path = "$rootDir/app/src/main/res/values-pt/strings.xml"  
