@@ -80,5 +80,6 @@ open class StringsUploadConfig {
 
 open class UploadEntry(
     var path: String = "",
-    var lang: String = ""
+    var lang: String = "",
+    var convertPlaceholders: Boolean = true
 )
