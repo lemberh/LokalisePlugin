@@ -20,7 +20,7 @@ buildscript {
   
   dependencies {  
          .......
-         classpath 'com.github.lemberh:LokalisePlugin:1.1.0' // latest version of plugin goes here
+         classpath 'com.github.OiTchau:LokalisePlugin:1.1.0' // latest version of plugin goes here
   }  
 }
 ```
