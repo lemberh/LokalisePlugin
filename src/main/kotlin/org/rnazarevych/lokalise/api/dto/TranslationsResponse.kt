@@ -15,7 +15,7 @@ data class TranslationKey(
     @SerializedName("description")
     val description: String,
     @SerializedName("key_id")
-    val keyId: Int,
+    val keyId: Long,
     @SerializedName("key_name")
     val keyName: KeyName,
     @SerializedName("platforms")
@@ -43,7 +43,7 @@ data class Translation(
     @SerializedName("is_reviewed")
     val isReviewed: Boolean,
     @SerializedName("key_id")
-    val keyId: Int,
+    val keyId: Long,
     @SerializedName("language_iso")
     val languageIso: String,
     @SerializedName("modified_at")
@@ -59,7 +59,7 @@ data class Translation(
     @SerializedName("translation")
     val translation: String,
     @SerializedName("translation_id")
-    val translationId: Int,
+    val translationId: Long,
     @SerializedName("words")
     val words: Int
 )

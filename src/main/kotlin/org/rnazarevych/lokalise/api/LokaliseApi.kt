@@ -37,7 +37,6 @@ interface LokaliseApi {
     fun fetchTranslations(
         @Path("projectId") projectId: String,
         @Query("include_translations") includeTranslations: Int = 1,
-        @Query("filter_untranslated") filterUntranslated: Int = 1,
         @Query("filter_platforms") platform: String = "android",
         @Query("limit") limit: Int = 5000
     ): Call<TranslationsResponse>
